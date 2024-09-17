@@ -4,7 +4,7 @@ provider "aws" {
 
 variable "bucket_name" {
   default = "angular-reactive-form-00001"
-  acl    = "private"
+  
 }
 
 variable "mime_types" {
