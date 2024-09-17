@@ -6,6 +6,10 @@ variable "bucket_name" {
   default = "angular-reactive-form-002"
 }
 
+data "aws_s3_bucket" "existing_bucket" {
+  bucket = "angular-reactive-form-002"
+}
+
 variable "mime_types" {
   default = {
     htm  = "text/html"
