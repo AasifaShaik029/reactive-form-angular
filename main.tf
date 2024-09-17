@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 variable "bucket_name" {
-  default = "angular-reactive-form-00001"
+  default = "angular-reactive-formappli-00001"
   
 }
 
