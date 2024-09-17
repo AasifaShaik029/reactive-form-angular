@@ -34,25 +34,33 @@ resource "aws_s3_bucket" "reactive_form" {
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "s3_public_block" {
-  bucket = aws_s3_bucket.reactive_form.id
 
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
-  
-}
 
 resource "aws_s3_bucket_ownership_controls" "s3_bucket_acl_ownership" {
   bucket = aws_s3_bucket.reactive_form.id
 
   rule {
     
-    object_ownership = "ObjectWriter"
+    object_ownership = "BucketOwnerPreferred"
   }
 }
+resource "aws_s3_bucket_public_access_block" "s3_public_block" {
+ bucket = aws_s3_bucket.reactive_form.id
 
+ block_public_acls = false
+ block_public_policy = false
+ ignore_public_acls = false
+ restrict_public_buckets = false
+}
+resource "aws_s3_bucket_acl" "reactive_form" {
+ depends_on = [
+ aws_s3_bucket_ownership_controls.reactive_form,
+ aws_s3_bucket_public_access_block.reactive_form,
+ ]
+
+ bucket = aws_s3_bucket.reactive_form.id
+ acl = "public-read"
+}
 resource "aws_s3_bucket_policy" "allow_public_access" {
   bucket = aws_s3_bucket.reactive_form.id
   policy = data.aws_iam_policy_document.allow_public_access.json
