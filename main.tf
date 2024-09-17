@@ -3,7 +3,8 @@ provider "aws" {
 }
 
 variable "bucket_name" {
-  default = "angular-reactive-form-0098734876342"
+  default = "angular-reactive-form-009873487342"
+  acl    = "private"
 }
 
 variable "mime_types" {
