@@ -46,13 +46,14 @@ resource "aws_s3_bucket_public_access_block" "s3_public_block" {
   block_public_policy     = false
   ignore_public_acls      = false
   restrict_public_buckets = false
+  IgnorePublicAcls        = false
 }
 
-resource "aws_s3_bucket_ownership_controls" "s3_ownership" {
-  bucket = aws_s3_bucket.reactive_form.id
+resource "aws_s3_bucket_ownership_controls" "ownership_controls_config_bucket" {
+  bucket = aws_s3_bucket.config_bucket.bucket
 
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "ObjectWriter"
   }
 }
 
