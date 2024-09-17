@@ -45,7 +45,7 @@ resource "aws_s3_bucket_public_access_block" "s3_public_block" {
 }
 
 resource "aws_s3_bucket_ownership_controls" "s3_ownership" {
-  bucket = aws_s3_bucket.config_bucket.bucket
+  bucket = aws_s3_bucket.reactive_form.id
 
   rule {
     control_object_ownership = true
