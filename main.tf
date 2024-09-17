@@ -6,11 +6,6 @@ variable "bucket_name" {
   default = "angular-reactive-formappli-00001"
   
 }
- versioning {
-    enabled = true
-  }
-
-
 
 variable "mime_types" {
   default = {
