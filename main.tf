@@ -44,7 +44,7 @@ resource "aws_s3_bucket_public_access_block" "s3_public_block" {
   
 }
 
-resource "aws_s3_bucket_ownership_controls" "ownership_controls_config_bucket" {
+resource "aws_s3_bucket_ownership_controls" "s3_ownership" {
   bucket = aws_s3_bucket.config_bucket.bucket
 
   rule {
