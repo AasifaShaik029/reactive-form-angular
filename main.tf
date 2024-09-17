@@ -1,26 +1,30 @@
 provider "aws" {
-  region = "eu-west-1"
+  region = "us-east-1"
 }
 
 variable "bucket_name" {
-  default = "angular-reactive-form-aasifa"  # Ensure this is unique or set as needed
+  default = "angular-reactive-form-002"
 }
 
-variable "create_bucket" {
-  description = "Set to true to create a new bucket, false to use an existing one."
-  type        = bool
-  default     = true
+variable "mime_types" {
+  default = {
+    htm  = "text/html"
+    html = "text/html"
+    css  = "text/css"
+    ttf  = "font/ttf"
+    js   = "application/javascript"
+    map  = "application/javascript"
+    json = "application/json"
+    ico  = "image/x-icon"
+  }
 }
 
-# Check if bucket exists (manual check or external script can set this)
-data "aws_s3_bucket" "existing_bucket" {
-  bucket = var.bucket_name
+# Use locals for the upload directory instead of variables
+locals {
+  upload_directory = "${path.cwd}/dist/app/browser/"
 }
 
-# Conditionally create a new bucket
 resource "aws_s3_bucket" "reactive_form" {
-  count = var.create_bucket ? 1 : 0
-
   bucket = var.bucket_name
 
   website {
@@ -29,11 +33,8 @@ resource "aws_s3_bucket" "reactive_form" {
   }
 }
 
-# Use the existing bucket if not creating a new one
 resource "aws_s3_bucket_public_access_block" "s3_public_block" {
-  count = var.create_bucket ? 0 : 1
-
-  bucket = data.aws_s3_bucket.existing_bucket.id
+  bucket = aws_s3_bucket.reactive_form.id
 
   block_public_acls       = false
   block_public_policy     = false
@@ -42,25 +43,19 @@ resource "aws_s3_bucket_public_access_block" "s3_public_block" {
 }
 
 resource "aws_s3_bucket_ownership_controls" "s3_ownership" {
-  count = var.create_bucket ? 0 : 1
-
-  bucket = data.aws_s3_bucket.existing_bucket.id
+  bucket = aws_s3_bucket.reactive_form.id
 
   rule {
-    object_ownership = "BucketOwnerEnforced"
+    object_ownership = "BucketOwnerPreferred"
   }
 }
 
 resource "aws_s3_bucket_policy" "allow_public_access" {
-  count = var.create_bucket ? 0 : 1
-
-  bucket = data.aws_s3_bucket.existing_bucket.id
+  bucket = aws_s3_bucket.reactive_form.id
   policy = data.aws_iam_policy_document.allow_public_access.json
 }
 
 data "aws_iam_policy_document" "allow_public_access" {
-  count = var.create_bucket ? 0 : 1
-
   statement {
     actions = ["s3:GetObject"]
     principals {
@@ -75,15 +70,18 @@ data "aws_iam_policy_document" "allow_public_access" {
 }
 
 resource "aws_s3_object" "website_files" {
-  for_each = fileset(local.upload_directory, "**/*.*")
-
-  bucket        = var.create_bucket ? aws_s3_bucket.reactive_form.bucket : data.aws_s3_bucket.existing_bucket.bucket
+  for_each      = fileset(local.upload_directory, "**/*.*")
+  bucket        = aws_s3_bucket.reactive_form.bucket
   key           = replace(each.value, local.upload_directory, "")
   source        = "${local.upload_directory}${each.value}"
   acl           = "public-read"
   content_type  = lookup(var.mime_types, split(".", each.value)[length(split(".", each.value)) - 1], "application/octet-stream")
 }
 
+output "website_domain" {
+  value = aws_s3_bucket.reactive_form.website_domain
+}
+
 output "website_endpoint" {
-  value = var.create_bucket ? aws_s3_bucket.reactive_form.website_endpoint : data.aws_s3_bucket.existing_bucket.website_endpoint
+  value = aws_s3_bucket.reactive_form.website_endpoint
 }
