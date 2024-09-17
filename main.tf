@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 variable "bucket_name" {
-  default = "angular-reactive-form-002"
+  default = "angular-reactive-form-003"
 }
 
 variable "mime_types" {
