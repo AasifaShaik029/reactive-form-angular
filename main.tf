@@ -9,7 +9,7 @@ variable "bucket_name" {
  versioning {
     enabled = true
   }
-}
+
 
 
 variable "mime_types" {
