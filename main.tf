@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 variable "bucket_name" {
-  default = "angular-reactive-formapplica-00001"
+  default = "angular-reactive-formapplica-000099"
 }
 
 variable "mime_types" {
