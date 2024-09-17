@@ -44,11 +44,11 @@ resource "aws_s3_bucket_public_access_block" "s3_public_block" {
   
 }
 
-resource "aws_s3_bucket_ownership_controls" "s3_ownership" {
+resource "aws_s3_bucket_ownership_controls" "s3_bucket_acl_ownership" {
   bucket = aws_s3_bucket.reactive_form.id
 
   rule {
-    control_object_ownership = true
+    
     object_ownership = "ObjectWriter"
   }
 }
