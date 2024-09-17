@@ -48,6 +48,7 @@ resource "aws_s3_bucket_ownership_controls" "s3_ownership" {
   bucket = aws_s3_bucket.config_bucket.bucket
 
   rule {
+    control_object_ownership = true
     object_ownership = "ObjectWriter"
   }
 }
