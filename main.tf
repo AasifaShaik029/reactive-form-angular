@@ -41,7 +41,7 @@ resource "aws_s3_bucket_public_access_block" "s3_public_block" {
   block_public_policy     = false
   ignore_public_acls      = false
   restrict_public_buckets = false
-  IgnorePublicAcls        = false
+  
 }
 
 resource "aws_s3_bucket_ownership_controls" "ownership_controls_config_bucket" {
