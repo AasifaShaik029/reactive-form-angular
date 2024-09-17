@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 variable "bucket_name" {
-  default = "angular-reactive-form-009873487342"
+  default = "angular-reactive-form-00001"
   acl    = "private"
 }
 
@@ -58,7 +58,11 @@ resource "aws_s3_bucket_policy" "allow_public_access" {
 
 data "aws_iam_policy_document" "allow_public_access" {
   statement {
-    actions = ["s3:GetObject"]
+     actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:ListBucket"
+    ]
     principals {
       type        = "AWS"
       identifiers = ["*"]
