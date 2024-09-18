@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 variable "bucket_name" {
-  default = "angular-reactive-formapplica-029"
+  default = "angular-reactive-apple1"
 }
 
 variable "mime_types" {
@@ -25,10 +25,18 @@ locals {
 
 resource "aws_s3_bucket" "reactive_form" {
   bucket = var.bucket_name
+}
 
-  website {
-    index_document = "index.html"
-    error_document = "index.html"
+# Separate website configuration
+resource "aws_s3_bucket_website_configuration" "reactive_form_website" {
+  bucket = aws_s3_bucket.reactive_form.bucket
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "index.html"
   }
 }
 
@@ -51,21 +59,21 @@ resource "aws_s3_bucket_public_access_block" "s3_public_block" {
 
 resource "aws_s3_bucket_policy" "allow_public_access" {
   bucket = aws_s3_bucket.reactive_form.id
+
   policy = data.aws_iam_policy_document.allow_public_access.json
 }
 
 data "aws_iam_policy_document" "allow_public_access" {
   statement {
     actions = [
-      "s3:GetObject",
-      "s3:PutObject",
-      "s3:ListBucket"
+      "s3:GetObject"
     ]
     principals {
       type        = "AWS"
       identifiers = ["*"]
     }
     resources = [
+      "arn:aws:s3:::${var.bucket_name}",
       "arn:aws:s3:::${var.bucket_name}/*"
     ]
     effect = "Allow"
