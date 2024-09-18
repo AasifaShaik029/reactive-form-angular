@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 variable "bucket_name" {
-  default = "angular-reactive-formapplica-000099"
+  default = "angular-reactive-formapplica-029"
 }
 
 variable "mime_types" {
@@ -32,30 +32,20 @@ resource "aws_s3_bucket" "reactive_form" {
   }
 }
 
-resource "aws_s3_bucket_acl" "reactive_form" {
-  depends_on = [
-    aws_s3_bucket_ownership_controls.s3_bucket_acl_ownership,
-    aws_s3_bucket_public_access_block.s3_public_block,
-  ]
-
-  bucket = aws_s3_bucket.reactive_form.id
-  acl    = "public-read"
-}
-
 resource "aws_s3_bucket_ownership_controls" "s3_bucket_acl_ownership" {
   bucket = aws_s3_bucket.reactive_form.id
 
   rule {
-    object_ownership = "ObjectWriter"
+    object_ownership = "BucketOwnerEnforced"
   }
 }
 
 resource "aws_s3_bucket_public_access_block" "s3_public_block" {
   bucket = aws_s3_bucket.reactive_form.id
 
-  block_public_acls   = false
+  block_public_acls   = true
   block_public_policy = false
-  ignore_public_acls  = false
+  ignore_public_acls  = true
   restrict_public_buckets = false
 }
 
@@ -87,7 +77,6 @@ resource "aws_s3_object" "website_files" {
   bucket        = aws_s3_bucket.reactive_form.bucket
   key           = replace(each.value, local.upload_directory, "")
   source        = "${local.upload_directory}${each.value}"
-  acl           = "public-read"
   content_type  = lookup(var.mime_types, split(".", each.value)[length(split(".", each.value)) - 1], "application/octet-stream")
 }
 
